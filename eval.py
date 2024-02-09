@@ -124,7 +124,7 @@ elif is_lv:
         raise NotImplementedError
 
 elif is_astro:
-    meta_dataset = AstroTestDataset(path.join(args.astro_test_path), size=args.size)
+    meta_dataset = AstroTestDataset(path.join(args.astro_test), size=args.size)
     if not args.save_all:
         args.save_all = True
         print('save_all is forced to be true for astro dataset.')

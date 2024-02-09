@@ -8,3 +8,4 @@
 
 - `python eval.py --output ../output/astro --mem_every 3 --dataset G --generic_path astro_test_root --save_scores --size -1 --model ./saves/<>.pth `
     - not the checkpoint one
+- `python eval.py --output ../output/astro --mem_every 3 --dataset A --astro_test astro_test_root --size -1 --model ./saves/<>.pth `

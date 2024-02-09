@@ -18,7 +18,7 @@ class AstroTestDataset:
                 path.join(self.image_dir, video), 
                 path.join(self.mask_dir, video),
                 to_save = [
-                    name[:-4] for name in os.listdir(path.join(self.mask_dir, video))
+                    name for name in os.listdir(path.join(self.mask_dir, video))
                 ],
                 size=self.size,
             )

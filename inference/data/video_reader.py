@@ -15,9 +15,9 @@ import torch
 from pathlib import Path
 
 class AstroVideoReader(Dataset):
-    def __init__(self, vid_name, image_dir, mask_dir, num_frames=50, size=[1000, 1000], to_save=None, use_all_mask=False, size_dir=None):
+    def __init__(self, vid_name, image_dir, mask_dir, num_frames=50, size = -1, to_save=None, use_all_mask=False, size_dir=None):
         self.vid_name = vid_name
-        self.image_dir = image_dir
+        self.image_dir = image_dir 
         self.mask_dir = mask_dir
         self.num_frames = num_frames
         self.to_save = to_save
@@ -56,11 +56,12 @@ class AstroVideoReader(Dataset):
         info = {}
         data = {}       #{'rgb': torch.zeros((self.num_frames, *self.size))}  # Initialize the tensor for grayscale images
         info['frame'] = self.frames[idx]            # self.frames[idx * self.num_frames: (idx + 1) * self.num_frames]  # Get a batch of frames
-        info['save'] = (self.to_save is None) or any(frame[:-4] in self.to_save for frame in info['frame'])
-
+        
         img_names = sorted(os.listdir(self.frames[idx]))
         timestamp =  str(int(img_names[0].split("_")[-2]))  # sn34_smd132_bx5_pe300_hdf5_plt_cnt_0201_z643.jpg
-        
+
+        info['save'] = (self.to_save is None) or (timestamp in self.to_save) #any(idx in self.to_save for frame in info['frame'])
+
         frame_images = []
         frame_masks = []
         for i, img_name in enumerate(img_names):
@@ -77,7 +78,7 @@ class AstroVideoReader(Dataset):
                 if os.path.exists(gt_path):
                     mask = Image.open(gt_path).convert('P')
                     mask = self.gt_transform(mask)
-                    mask = np.array(mask, dtype=np.uint8)
+                    # mask = np.array(mask, dtype=np.uint8)
                     frame_masks.append(mask)
 
         if self.use_all_mask or (gt_path == self.first_gt_path):
@@ -100,7 +101,7 @@ class AstroVideoReader(Dataset):
 
     def get_palette(self):
         return self.palette
-        
+
     def __len__(self):
         return len(self.frames) #// self.num_frames  # Number of batches
     
