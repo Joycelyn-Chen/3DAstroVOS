@@ -58,22 +58,15 @@ class AstroVideoReader(Dataset):
         info['frame'] = self.frames[idx]            # self.frames[idx * self.num_frames: (idx + 1) * self.num_frames]  # Get a batch of frames
         info['save'] = (self.to_save is None) or any(frame[:-4] in self.to_save for frame in info['frame'])
 
-        img_paths = sorted(os.listdir(self.frames[idx]))
-        timestamp =  str(int(img_paths[0].split("_")[-2]))  # sn34_smd132_bx5_pe300_hdf5_plt_cnt_0201_z643.jpg
+        img_names = sorted(os.listdir(self.frames[idx]))
+        timestamp =  str(int(img_names[0].split("_")[-2]))  # sn34_smd132_bx5_pe300_hdf5_plt_cnt_0201_z643.jpg
         
         frame_images = []
         frame_masks = []
-        for i, img_name in enumerate(img_paths):
+        for i, img_name in enumerate(img_names):
             img_path = os.path.join(self.image_dir, timestamp, img_name)
             img = Image.open(img_path).convert('RGB')
             
-
-            if self.image_dir == self.size_dir:
-                shape = np.array(img).shape[:2]
-            else:
-                size_path = os.path.join(self.size_dir, frame)
-                size_im = Image.open(size_path).convert('RGB')
-                shape = np.array(size_im).shape[:2]
 
             img = self.im_transform(img)  # Apply transformations
             frame_images.append(img)
@@ -92,12 +85,22 @@ class AstroVideoReader(Dataset):
 
         data['rgb'] = torch.stack(frame_images, 0)  # Stack the transformed frame
 
+        if self.image_dir == self.size_dir:
+            shape = np.array(frame_images).shape[:3]
+        else:
+            size_path = os.path.join(self.size_dir, timestamp, img_name)
+            size_im = Image.open(size_path).convert('RGB')
+            shape = np.array(size_im).shape[:3]
+
         info['shape'] = shape
-        info['need_resize'] = True  # Always true since we're resizing
+        info['need_resize'] = not (self.size < 0)
         data['info'] = info
 
         return data
 
+    def get_palette(self):
+        return self.palette
+        
     def __len__(self):
         return len(self.frames) #// self.num_frames  # Number of batches
     
