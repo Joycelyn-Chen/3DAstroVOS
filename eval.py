@@ -175,15 +175,16 @@ for vid_reader in progressbar(meta_loader, max_value=len(meta_dataset), redirect
     for ti, data in enumerate(loader):
         with torch.cuda.amp.autocast(enabled=not args.benchmark):
             rgb = data['rgb'].cuda()[0]
-            #DEBUG
-            print(f"data['rgb'].shape: {rgb.shape}")
-
             msk = data.get('mask')
             info = data['info']
             frame = info['frame'][0]
             shape = info['shape']
             need_resize = info['need_resize'][0]
 
+            #DEBUG
+            print(f"info: {info}")
+            print(f"frame[0]: {frame}")
+            print(f"shape: {shape}")
             """
             For timing see https://discuss.pytorch.org/t/how-to-measure-time-in-pytorch/26964
             Seems to be very similar in testing as my previous timing method 
