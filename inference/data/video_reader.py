@@ -35,19 +35,22 @@ class AstroVideoReader(Dataset):
 
         if size < 0:
             self.im_transform = transforms.Compose([
+                # transforms.Grayscale(num_output_channels=1),
                 transforms.ToTensor(),
-                transforms.Grayscale(),
                 im_normalization,
             ])
             self.gt_transform = transforms.Compose([
-            transforms.ToTensor(),
+                transforms.ToTensor(),
             ])
         else:
             self.im_transform = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Grayscale(),
+                # transforms.Grayscale(),
                 im_normalization,
                 transforms.Resize(size, interpolation=InterpolationMode.BILINEAR),
+            ])
+            self.gt_transform = transforms.Compose([
+                transforms.ToTensor(),
             ])
         self.size = size
 
@@ -57,8 +60,8 @@ class AstroVideoReader(Dataset):
         data = {}       #{'rgb': torch.zeros((self.num_frames, *self.size))}  # Initialize the tensor for grayscale images
         info['frame'] = self.frames[idx]            # self.frames[idx * self.num_frames: (idx + 1) * self.num_frames]  # Get a batch of frames
         
-        print(f"self.frames[idx]: {self.frames[idx]}\n\n\n")
-        img_names = sorted(os.listdir(self.frames[idx]))
+
+        img_names = self.frames[idx]
         timestamp =  str(int(img_names[0].split("_")[-2]))  # sn34_smd132_bx5_pe300_hdf5_plt_cnt_0201_z643.jpg
 
         info['save'] = (self.to_save is None) or (timestamp in self.to_save) #any(idx in self.to_save for frame in info['frame'])
@@ -68,7 +71,6 @@ class AstroVideoReader(Dataset):
         for i, img_name in enumerate(img_names):
             img_path = os.path.join(self.image_dir, timestamp, img_name)
             img = Image.open(img_path).convert('RGB')
-            
 
             img = self.im_transform(img)  # Apply transformations
             frame_images.append(img)
@@ -84,9 +86,13 @@ class AstroVideoReader(Dataset):
 
         if self.use_all_mask or (gt_path == self.first_gt_path):
             data['mask'] = torch.stack(frame_masks, 0) 
+            with open("tmp.txt", "w") as f:
+                f.write(f"{data['mask']}\n")
 
+        
         data['rgb'] = torch.stack(frame_images, 0)  # Stack the transformed frame
-
+        
+        
         if self.image_dir == self.size_dir:
             shape = np.array(frame_images).shape[:3]
         else:

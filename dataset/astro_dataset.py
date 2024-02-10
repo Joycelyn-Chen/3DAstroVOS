@@ -15,7 +15,7 @@ from collections import defaultdict
 
 #+-----------------------------------static version---------------------+
 class AstroDataset(Dataset):
-    def __init__(self, im_root, gt_root, num_frames=50, max_num_obj=1, num_timestamps):
+    def __init__(self, im_root, gt_root, num_timestamps, num_frames=50, max_num_obj=1):
         self.im_root = im_root
         self.gt_root = gt_root
         self.num_frames = num_frames
