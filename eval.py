@@ -235,7 +235,11 @@ for vid_reader in progressbar(meta_loader, max_value=len(meta_dataset), redirect
 
             # Save the mask
             if args.save_all or info['save'][0]:
-                this_out_path = path.join(out_path, vid_name)
+                if is_astro:
+                    timestamp = str(int(frame.split("_")[-2]))
+                    this_out_path = path.join(out_path, vid_name, timestamp)
+                else:
+                    this_out_path = path.join(out_path, vid_name)
                 os.makedirs(this_out_path, exist_ok=True)
                 out_mask = mapper.remap_index_mask(out_mask)
                 out_img = Image.fromarray(out_mask)
