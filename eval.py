@@ -199,6 +199,9 @@ for vid_reader in progressbar(meta_loader, max_value=len(meta_dataset), redirect
             if not first_mask_loaded:
                 if msk is not None:
                     first_mask_loaded = True
+                    #DEBUG
+                    print("First mask loaded!")
+                    
                 else:
                     # no point to do anything without a mask
 
