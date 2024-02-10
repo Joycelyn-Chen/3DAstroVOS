@@ -57,6 +57,7 @@ class AstroVideoReader(Dataset):
         data = {}       #{'rgb': torch.zeros((self.num_frames, *self.size))}  # Initialize the tensor for grayscale images
         info['frame'] = self.frames[idx]            # self.frames[idx * self.num_frames: (idx + 1) * self.num_frames]  # Get a batch of frames
         
+        print(f"self.frames[idx]: {self.frames[idx]}\n\n\n")
         img_names = sorted(os.listdir(self.frames[idx]))
         timestamp =  str(int(img_names[0].split("_")[-2]))  # sn34_smd132_bx5_pe300_hdf5_plt_cnt_0201_z643.jpg
 
