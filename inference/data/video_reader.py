@@ -27,7 +27,7 @@ class AstroVideoReader(Dataset):
         self.frames = self.__read_frames(self.image_dir) #sorted(os.listdir(self.image_dir))[:self.num_frames]  # Limit to num_frames
         
         timestamp_dir = os.path.join(mask_dir, sorted(os.listdir(mask_dir))[0])
-        mask_filename = os.listdir(timetamp_dir)[0]
+        mask_filename = os.listdir(timestamp_dir)[0]
         self.palette = Image.open(os.path.join(timestamp_dir, mask_filename)).getpalette()
         self.first_gt_path = os.path.join(self.mask_dir, sorted(os.listdir(self.mask_dir))[0])
 
