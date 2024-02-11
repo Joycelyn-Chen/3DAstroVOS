@@ -73,6 +73,7 @@ class MainToGroupDistributor(nn.Module):
             if self.reverse_order:
                 g = torch.cat([g, x.unsqueeze(1).expand(-1,num_objects,-1,-1,-1)], 2)
             else:
+                # g = torch.cat([x.expand(-1,num_objects,-1,-1,-1), g], 2)
                 g = torch.cat([x.unsqueeze(1).expand(-1,num_objects,-1,-1,-1), g], 2)
         elif self.method == 'add':
             g = x.unsqueeze(1).expand(-1,num_objects,-1,-1,-1) + g

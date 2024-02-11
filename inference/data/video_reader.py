@@ -75,22 +75,23 @@ class AstroVideoReader(Dataset):
             img = self.im_transform(img)  # Apply transformations
             frame_images.append(img)
 
-            gt_path = os.path.join(self.mask_dir, timestamp)
-            if self.use_all_mask or (gt_path == self.first_gt_path):
-                gt_path = os.path.join(gt_path, img_name[:-4] + '.png')
+            gt_path_dir = os.path.join(self.mask_dir, timestamp)
+            if self.use_all_mask or (gt_path_dir == self.first_gt_path):
+                gt_path = os.path.join(gt_path_dir, img_name[:-4] + '.png')
                 if os.path.exists(gt_path):
                     mask = Image.open(gt_path).convert('P')
                     mask = self.gt_transform(mask)
                     # mask = np.array(mask, dtype=np.uint8)
                     frame_masks.append(mask)
 
-        if self.use_all_mask or (gt_path == self.first_gt_path):
-            data['mask'] = torch.stack(frame_masks, 0) 
-            with open("tmp.txt", "w") as f:
-                f.write(f"{data['mask']}\n")
+        if self.use_all_mask or (gt_path_dir == self.first_gt_path):
+            data['mask'] = torch.stack(frame_masks, 0)[:, 0, :, :] 
+            with open("tmp.txt", "a+") as f:
+                f.write(f"data['mask']: {data['mask'].shape}\n")
+            
 
         
-        data['rgb'] = torch.stack(frame_images, 0)  # Stack the transformed frame
+        data['rgb'] = torch.stack(frame_images, 0)[:, 0, :, :]  # Stack the transformed frame
         
         
         if self.image_dir == self.size_dir:

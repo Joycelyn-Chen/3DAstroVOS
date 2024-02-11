@@ -175,14 +175,16 @@ for vid_reader in progressbar(meta_loader, max_value=len(meta_dataset), redirect
     for ti, data in enumerate(loader):
         with torch.cuda.amp.autocast(enabled=not args.benchmark):
             rgb = data['rgb'].cuda()[0]
+            
             #DEBUG
-            print(f"rgb shape: {rgb.shape}")
+            print(f"\nrgb shape: {rgb.shape}")
+
             msk = data.get('mask')
             info = data['info']
             frame = info['frame'][0]
 
             #DEBUG
-            print(f"frame: {frame}\n")
+            print(f"frame: {frame}")
 
             shape = info['shape']
             need_resize = info['need_resize'][0]
@@ -204,9 +206,6 @@ for vid_reader in progressbar(meta_loader, max_value=len(meta_dataset), redirect
                     
                 else:
                     # no point to do anything without a mask
-
-                    #DEBUG
-                    print("No mask loaded!")
                     continue
 
             if args.flip:

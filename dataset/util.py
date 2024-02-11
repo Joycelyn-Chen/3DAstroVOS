@@ -4,6 +4,8 @@ import numpy as np
 def all_to_onehot(masks, labels):
     if len(masks.shape) == 3:
         Ms = np.zeros((len(labels), masks.shape[0], masks.shape[1], masks.shape[2]), dtype=np.uint8)
+    elif len(masks.shape) == 4:
+        Ms = np.zeros((len(labels), masks.shape[0], masks.shape[1], masks.shape[2], masks.shape[3]), dtype=np.uint8)
     else:
         Ms = np.zeros((len(labels), masks.shape[0], masks.shape[1]), dtype=np.uint8)
 
